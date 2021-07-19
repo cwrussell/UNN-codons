@@ -7,6 +7,7 @@ from Bio import SeqIO
 class GenBankError(Exception): pass
 class GenBankParsingError(GenBankError): pass
 
+
 def parse(path):
     """
     Parse a GenBank file to get information about its proteins
@@ -58,7 +59,7 @@ def _parse_features(rec):
                 "gene": _get_gene(quals),
                 "protein_id": quals["protein_id"][0],
                 "protein_sequence": quals["translation"][0],
-                "nucleotide_sequence": str(feature.extract(seq)),
+                "nucleotide_sequence": _get_nt(feature, seq),
             })
     return proteins
 
@@ -70,3 +71,9 @@ def _get_gene(quals):
         return quals["locus_tag"][0]
     else:
         return None
+
+
+def _get_nt(feature, seq):
+    nt_seq = str(feature.extract(seq)).upper()
+    rna = nt_seq.replace("T", "U")
+    return rna
