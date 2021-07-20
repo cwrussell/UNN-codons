@@ -24,14 +24,24 @@ def parse_args():
     return parser.parse_args()
 
 
+def get_output_path(output_param, genome_id):
+    if output_param is None:
+        return f"{genome_id}.unn_codons.tsv"
+    else:
+        return output_param
+
+
 def main():
     args = parse_args()
     genome = parse_gbk.parse(args.genbank)
+    output = get_output_path(args.output, genome["id"])
     protein_stats = codon_counts.count(genome["proteins"])
     unn_stats = unn_calculations.calculate(protein_stats)
     main_table = table.create_main_table(unn_stats)
+    # main_table.to_csv("tmp.tsv", sep="\t", index=None)
+    # print(main_table.dtypes)
     header_table = table.create_header_table(main_table)
-    table.create_final_table(header_table, main_table, args.output)
+    table.create_final_table(header_table, main_table, output)
 
 if __name__ == "__main__":
     main()

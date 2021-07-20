@@ -17,15 +17,15 @@ UNN_RESIDUES = [
 
 # Round float to 2 decimal points
 def flt(f):
-    return round(f, 2)
+    return round(float(f), 2)
 
 # Codon counts and percentages for amino acids in UNN_RESIDUES
 RESIDUE_COUNTS = {
     res: {
-        "all": int,                           # codons for this amino acid
-        "unn": int,                           # UNN codons for this amino acid
-        "unn_of_all": And(float, Use(flt)),   # unn/total codons in protein*100
-        "unn_of_self": And(float, Use(flt)),  # unn/all * 100
+        "all": int,               # codons for this amino acid
+        "unn": int,               # UNN codons for this amino acid
+        "unn_of_all": Use(flt),   # unn/total codons in protein*100
+        "unn_of_self": Use(flt),  # unn/all * 100
     }
     for res in UNN_RESIDUES
 }

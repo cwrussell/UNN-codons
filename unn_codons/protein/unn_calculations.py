@@ -104,7 +104,7 @@ def _calculate_percentages(codons):
             counts["unn_of_self"] = counts["unn"] / counts["all"] * 100
 
     # Percentage of codons in protein that are UNN
-    counts = codons["all"]
+    counts = codons["all_residues"]
     counts["unn_of_self"] = counts["unn"] / counts["all"] * 100
 
     # Percentage of codons for amino acids in UNN_RESIDUES that are UNN

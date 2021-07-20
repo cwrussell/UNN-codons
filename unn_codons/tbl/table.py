@@ -43,7 +43,7 @@ def create_main_table(proteins):
     for protein in proteins:
         data.append(_create_row(protein))
     df = pandas.DataFrame(
-        numpy.ndarra(data),
+        numpy.array(data),
         columns=FIELDS,
     )
     return df
@@ -91,13 +91,12 @@ def create_header_table(main_table):
     }
     for fld in FIELDS[2:]:
         header_table["means"].append(
-            main_table[fld].mean()
+            main_table[fld].astype("float64").mean()
         )
         header_table["medians"].append(
-            main_table[fld].median()
+            main_table[fld].astype("float64").median()
         )
     return header_table
-
 
 
 def create_final_table(header, table, path):
@@ -108,11 +107,13 @@ def create_final_table(header, table, path):
     :param path <str>: output file path
     :returns None:
     """
+    means = [str(x) for x in header["means"]]
+    medians = [str(x) for x in header["medians"]]
     with open(path, "w") as out:
         out.write("\t\t" + "\t".join(FIELDS[2:]) + "\n")
-        out.write("\tAverages" + "\t".join(header["means"]) + "\n")
-        out.write("\tMedian" + "\t".join(header["medians"]) + "\n")
+        out.write("\tAverages\t" + "\t".join(means) + "\n")
+        out.write("\tMedian\t" + "\t".join(medians) + "\n")
         out.write("\t".join(FIELDS) + "\n")
         sorted_table = table.sort_values(by="Gene")
-        for _, row in sorted_table:
-            out.write("\t".join([str(x) for x in list(row)]))
+        for _, row in sorted_table.iterrows():
+            out.write("\t".join([str(x) for x in list(row)]) + "\n")
