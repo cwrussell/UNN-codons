@@ -7,18 +7,18 @@ class CalculationError(UNNCalculationError): pass
 def calculate(proteins):
     """
     For all proteins in the genome, calculate the frequency of the various
-    UNN codons
+    UNN codons. Calculate summary statistics across all proteins.
     :param proteins <list<struct.codon_counts.CODON>>: codon counts for each
         protein in the genome
-    :returns <list<struct.unn_calculations.TABLE_DATA>>: calculated UNN
+    :returns: <list<struct.unn_calculations.TABLE_DATA>>: calculated UNN
         frequencies for each protein for the final table
     """
     try:
-        table = []
+        protein_stats = []
         for protein in proteins:
-            row = TABLE_DATA.validate(_calculate_unn(protein))
-            table.append(row)
-        return table 
+            one_protein_stats = TABLE_DATA.validate(_calculate_unn(protein))
+            protein_stats.append(one_protein_stats)
+        return protein_stats
     except Exception as err:
         raise CalculationError(
             f"Unable to calculate UNN codon codon frequencies: {err}"
@@ -103,7 +103,45 @@ def _calculate_percentages(codons):
         else:
             counts["unn_of_self"] = counts["unn"] / counts["all"] * 100
 
+    # Percentage of codons in protein that are UNN
+    counts = codons["all"]
+    counts["unn_of_self"] = counts["unn"] / counts["all"] * 100
+
     # Percentage of codons for amino acids in UNN_RESIDUES that are UNN
     codons["unn_codons_per_unn_residues"] = unn_codons / all_codons * 100
 
     return codons
+
+
+# def _calculate_summary_stats(proteins):
+#     """
+#     Calculate summary statistics across the whole genome
+#     :param proteins <list<struct.codon_counts.CODON>>: codon counts for each
+#         protein in the genome
+#     :returns: <struct.unn_calculations.SUMMARY_DATA>: summary stats calculated
+#         across all proteins
+# SUMMARY_DATA = Schema({
+#     # Percentage of codons for amino acids in UNN_RESIDUES that are UNN
+#     "unn_codons_per_unn_residues": And(float, Use(perc)),
+
+#     # Total number of codons and UNN codons
+#     "all_residues": {
+#         "all": int,
+#         "unn": int,
+#     },
+
+#     **RESIDUE_COUNTS,
+# })
+#     """
+#     SUMMARY_FIELDS = [
+#         "all_residues":
+#     ]
+#     SUMMARY_DATA = Schema({
+#         "all_residues": {
+#             "all": {"mean": float, "median": int},
+#             "unn": {"mean": float, "median", int},
+#             "unn_of_all": {"mean": float, "median": float},
+#             "unn_of_self": {"mean": float, "median": float},
+#         }
+#     }) 
+
