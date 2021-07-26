@@ -39,5 +39,6 @@ def _count_codons(protein):
         aa_counts = counts.setdefault(aa3, {})
         aa_counts.setdefault(codon, 0)
         aa_counts[codon] += 1
+    counts["Ter"] = {codons[-1]: 1}
     protein["codons"] = counts
     return protein

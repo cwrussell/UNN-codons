@@ -54,7 +54,7 @@ def _count_unn_codons(codons):
         for codon, count in codons.get(res, {}).items():
             all_codons += count
             if codon.startswith("U"):
-                unn_codons += 1
+                unn_codons += count
         counts[res] = {
             "all": all_codons,
             "unn": unn_codons
@@ -72,9 +72,9 @@ def _count_all_residues(codons):
     unn_codons = 0
     for codon_counts in codons.values():
         for codon, count in codon_counts.items():
-            all_codons += 1
+            all_codons += count
             if codon.startswith("U"):
-                unn_codons += 1
+                unn_codons += count
     return {"all": all_codons, "unn": unn_codons}
 
 

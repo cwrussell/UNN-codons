@@ -8,35 +8,44 @@ class GenBankError(Exception): pass
 class GenBankParsingError(GenBankError): pass
 
 
-def parse(path):
+def parse(paths):
     """
-    Parse a GenBank file to get information about its proteins
-    :param path <str | None>: path to the GenBank file (if None, the UTI89 genome is used)
+    Parse a set of GenBank files to get information about its proteins
+    :param paths <list<str>>: paths to the GenBank files (if null, the UTI89
+        genome and plasmid is used)
     :returns <struct.gbk.RECORD>
     """
-    path = _get_path(path)
+    paths = _get_paths(paths)
     try:
-        record = _parse_genbank(path)
+        record = {"ids": [], "proteins": []}
+        for path in paths:
+            rec = _parse_genbank(path)
+            record["ids"].append(rec["id"])
+            record["proteins"].extend(rec["proteins"])
         gbk.RECORD.validate(record)
         return record
     except Exception as err:
         raise GenBankParsingError(f"Unable to parse {path}: {err}")
 
 
-def _get_path(path):
-    """ Get the GenBank file path """
-    if path is None:
-        path = os.path.normpath(
+def _get_paths(paths):
+    """ Get the GenBank file paths """
+    if not paths:
+        data_dir = os.path.normpath(
             os.path.join(
                 os.path.dirname(__file__),
                 "..",
                 "data",
                 "genbank",
-                "CP000243.1.gbk",
             )
         )
-    assert os.path.isfile(path), f"Invalid GenBank file path: {path}"
-    return path
+        paths = [
+            os.path.join(data_dir, "CP000243.1.gbk"),
+            os.path.join(data_dir, "CP000244.1.gbk"),
+        ]
+    for path in paths:
+        assert os.path.isfile(path), f"Invalid GenBank file path: {path}"
+    return paths
 
 
 def _parse_genbank(path):

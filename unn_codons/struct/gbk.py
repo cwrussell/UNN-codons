@@ -14,7 +14,7 @@ AA_3_1 = {
     "Met": "M", "Phe": "F", "Pro": "P",
     "Sec": "U", "Ser": "S", "Thr": "T",
     "Trp": "W", "Tyr": "Y", "Val": "V",
-    "Xaa": "X",
+    "Xaa": "X", "Ter": "*",
 }
 
 # Mapping of 1 to 3 amino acid representation
@@ -33,6 +33,6 @@ PROTEIN_INFO = {
 PROTEIN = Schema(PROTEIN_INFO)
 
 RECORD = Schema({
-    "id": str,
+    "ids": [str],
     "proteins": [PROTEIN]
 })
